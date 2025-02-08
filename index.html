@@ -3,103 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrashTrack</title>
+    <title>AI Trash Bin - Drag & Drop</title>
     <style>
-        /* Global Styles */
         body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
-            overflow-x: hidden;
-            background: url('last.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background-color: #e8f5e9;
         }
-        
-        /* Navbar */
-        .navbar {
-            background-color: rgba(34, 139, 34, 0.9);
-            color: white;
-            padding: 15px;
-            font-size: 22px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 10;
+        h1 {
+            color: #2e7d32;
         }
-
-        /* Animated Title */
-        .title {
-            font-size: 50px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 3px 3px 6px black;
-            animation: glow 2s infinite alternate, fadeIn 3s ease-in-out;
-        }
-        @keyframes glow {
-            0% { text-shadow: 3px 3px 6px black; }
-            100% { text-shadow: 5px 5px 15px lightgreen; }
-        }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Content Container */
-        .container {
+        .game-container {
             display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            height: 100vh;
-            padding-right: 100px;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 30px;
         }
-
-        /* Text and Button Box */
-        .hello {
-            background-color: rgba(179, 220, 179, 0.8); /* Lightgreen with transparency */
-            border-radius: 20px;
-            padding: 20px;
-            width: 400px;
-            text-align: center;
-        }
-        
-        /* Buttons */
-        .buttons {
+        .bin {
+            width: 200px;
+            height: 250px;
+            border: 3px dashed #555;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-        }
-        .btn {
-            padding: 12px 30px;
             font-size: 18px;
-            border: none;
-            color: white;
-            cursor: pointer;
+            font-weight: bold;
+            background-color: #fff;
             border-radius: 10px;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #3cb371, #2e8b57);
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
         }
-        .btn:hover {
-            transform: scale(1.1);
-            background: linear-gradient(135deg, #2e8b57, #3cb371);
+        .drag-item {
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            cursor: grab;
         }
-        .btn:active {
-            transform: scale(0.95);
+        .bins-container {
+            display: flex;
+            gap: 20px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .points {
+            font-size: 20px;
+            margin-top: 15px;
+            color: #555;
         }
     </style>
 </head>
 <body>
+
+    <h1>AI Trash Bin - Drag & Drop Game</h1>
+    <p>Drag the items into the correct bin!</p>
     
-    <div class="container">
-        <div class="hello">
-            <h2 class="title">TrashTrack</h2>
-            <p style="color: white; text-shadow: 2px 2px 4px #000;">Keep the Planet Clean</p>
-            <div class="buttons">
-                <button class="btn" onclick="window.location.href='https://examplegame.com'">Play Game</button>
-                <button class="btn" onclick="window.location.href='https://tinkerhack-wasteclassifier.streamlit.app/'">Classify Image</button>
+    <div class="game-container">
+        <div class="bins-container">
+            <div id="biodegradable-bin" class="bin" ondragover="allowDrop(event)" ondrop="drop(event, 'biodegradable')">
+                Biodegradable ♻
+            </div>
+            <div id="nonbiodegradable-bin" class="bin" ondragover="allowDrop(event)" ondrop="drop(event, 'nonbiodegradable')">
+                Non-Biodegradable 🗑
             </div>
         </div>
     </div>
+
+    <h2 class="points">Points: <span id="points">0</span></h2>
+    <p id="feedback"></p>
+
+    <div class="game-container" id="items-container">
+    <img scr="https://static.toiimg.com/photo/73331141.cms" >
+        <!-- Images will be dynamically inserted here -->
+    </div>
+
+    <script>
+        let points = 0;
+
+        const items = {
+    // Biodegradable items
+    "fruit_peel": ["biodegradable", "images/bananapeel.png"],
+    "vegetable_scraps": ["biodegradable", "images/vegetablewaste.png"],
+    "eggshells": ["biodegradable", "images/eggshell.png"],
+    "paper": ["biodegradable", "images/paper.png"],
+    "cardboard": ["biodegradable", "images/cardboardbox.png"],
+    "cotton_cloth": ["biodegradable", "images/cottoncloth.png"],
+    "banana_leaves": ["biodegradable", "images/bananatree.png"],
+    "tea_leaves": ["biodegradable", "images/teagreen.png"],
+    "garden_waste": ["biodegradable", "images/woodshavings.png"],
+    "food_leftovers": ["biodegradable", "images/chickenwaste.png"],
+    "rice_husks": ["biodegradable", "images/strawberry.png"],
+    "sawdust": ["biodegradable", "images/deadplant.png"],
+    "natural_fabrics": ["biodegradable", "images/cottoncloth.png"],
+    "dead_plants": ["biodegradable", "images/wood.png"],
+    "cow_dung": ["biodegradable", "images/cowdung.png"],
+    "jute_bags": ["biodegradable", "images/jutesack.png"],
+    "straw_hay": ["biodegradable", "images/hay.png"],
+    "used_matchsticks": ["biodegradable", "images/matchstick.png"],
+    "flowers": ["biodegradable", "images/plant.png"],
+    "coconut_shells": ["biodegradable", "images/coconutshell.png"],
+    "human_hair": ["biodegradable", "images/humanhair.png"],
+    "bamboo_products": ["biodegradable", "images/bambooprod.png"],
+    "compostable_plates": ["biodegradable", "images/paperplate.png"],
+    "palm_leaves": ["biodegradable", "images/palmleave.png"],
+
+    // Non-biodegradable items
+    "plastic_bags": ["nonbiodegradable", "images/plasticbags.png"],
+    "leather_products": ["biodegradable", "images/leather.png"],
+    "plastic_bottles": ["nonbiodegradable", "images/plasticbottle.png"],
+    "glass_bottles": ["nonbiodegradable", "images/glassbottle.png"],
+    "aluminum_cans": ["nonbiodegradable", "images/aluminium.png"],
+    "styrofoam": ["nonbiodegradable", "images/styrofoam.png"],
+    "electronic_waste": ["nonbiodegradable", "images/ewaste.png"],
+    "batteries": ["nonbiodegradable", "images/battery.png"],
+    "plastic_straws": ["nonbiodegradable", "images/straws.png"],
+    "synthetic_fabrics": ["nonbiodegradable", "images/syntheticcloth.png"],
+    "cds_dvds": ["nonbiodegradable", "images/dvd.png"],
+    "rubber_products": ["nonbiodegradable", "images/glove.png"],
+    "plastic_cutlery": ["nonbiodegradable", "images/plasticfork.png"],
+    "tetra_pak": ["nonbiodegradable", "images/milkbox.png"],
+    "sanitary_napkins": ["nonbiodegradable", "images/sanitary.png"],
+    "disposable_masks": ["nonbiodegradable", "images/surgicalmask.png"],
+    "foam_mattresses": ["nonbiodegradable", "images/mattress.png"],
+    "broken_ceramics": ["nonbiodegradable", "images/brokenceramics.png"],
+    "plastic_toothbrushes": ["nonbiodegradable", "images/leather.png"],
+
+};
+
+     
+
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+
+        function drop(event, binType) {
+            event.preventDefault();
+            const itemId = event.dataTransfer.getData("text");
+            const item = document.getElementById(itemId);
+            const feedback = document.getElementById("feedback");
+            const pointsDisplay = document.getElementById("points");
+
+            if (items[itemId][0] === binType) {
+                feedback.textContent = "✅ Correct! You earned 10 points!";
+                feedback.className = "correct";
+                points += 10;
+            } else {
+                feedback.textContent = "❌ Incorrect! Try again.";
+                feedback.className = "incorrect";
+            }
+
+            pointsDisplay.textContent = points;
+            item.style.display = "none";
+        }
+
+        function loadItems() {
+            const container = document.getElementById("items-container");
+            for (let key in items) {
+                let img = document.createElement("img");
+                img.src =items[key][1] ; // Ensure you have these images
+                img.alt = key.replace("_", " ");
+                img.className = "drag-item";
+                img.draggable = true;
+                img.id = key;
+                img.ondragstart = drag;
+                container.appendChild(img);
+            }
+        }
+
+        window.onload = loadItems;
+    </script>
 </body>
 </html>
