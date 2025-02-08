@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrashTrack</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            overflow-x: hidden;
+            background: url('last.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: rgba(34, 139, 34, 0.9);
+            color: white;
+            padding: 15px;
+            font-size: 22px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Animated Title */
+        .title {
+            font-size: 50px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 3px 3px 6px black;
+            animation: glow 2s infinite alternate, fadeIn 3s ease-in-out;
+        }
+        @keyframes glow {
+            0% { text-shadow: 3px 3px 6px black; }
+            100% { text-shadow: 5px 5px 15px lightgreen; }
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Container */
+        .container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 100vh;
+            padding-right: 100px;
+        }
+
+        /* Text and Button Box */
+        .hello {
+            background-color: rgba(179, 220, 179, 0.8); /* Lightgreen with transparency */
+            border-radius: 20px;
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+        
+        /* Buttons */
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #3cb371, #2e8b57);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #2e8b57, #3cb371);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="hello">
+            <h2 class="title">TrashTrack</h2>
+            <p style="color: white; text-shadow: 2px 2px 4px #000;">Keep the Planet Clean</p>
+            <div class="buttons">
+                <button class="btn" onclick="window.location.href='https://examplegame.com'">Play Game</button>
+                <button class="btn" onclick="window.location.href='https://tinkerhack-wasteclassifier.streamlit.app/'">Classify Image</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
